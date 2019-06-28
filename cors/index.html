@@ -1,0 +1,31 @@
+<html>
+<head>
+    <title>Envoy CORS Example</title>
+</head>
+<script type="text/javascript">
+  const client = new XMLHttpRequest()
+
+  function callApi(url) {
+      client.open('GET', url, true);
+      client.onreadystatechange = handler;
+      client.send();
+  }
+
+  function handler() {
+      const responseHeaders = client.getAllResponseHeaders()
+      if (responseHeaders === "") {
+          document.getElementById("result").textContent = 'CORS Error ' + client.statusText;
+      } else if (client.readyState === 4 && client.status === 200) {
+          document.getElementById("result").textContent = client.responseText;
+      }
+  }
+</script>
+<body>
+    <h1>Envoy CORS Example</h1>
+    <button onclick="callApi('http://localhost:8081/cors/restricted')">http://localhost:8081/cors/restricted</button><br/>
+    <button onclick="callApi('http://localhost:8081/cors/open')">http://localhost:8081/cors/open</button><br/>
+
+    <h3>Result</h3>
+    <p id="result"></p>
+</body>
+</html>
