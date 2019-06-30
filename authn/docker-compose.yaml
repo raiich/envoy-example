@@ -1,0 +1,14 @@
+version: '3'
+services:
+  signer:
+    build: signer
+    ports:
+    - "8080:8080"
+  envoy:
+    image: envoyproxy/envoy-alpine:latest
+    ports:
+    - "10000:10000"
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    environment:
+    - loglevel=info
