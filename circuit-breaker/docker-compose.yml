@@ -1,0 +1,89 @@
+version: '2'
+services:
+  frontend:
+    image: openresty/openresty:alpine
+    cpu_quota: 102400
+    command:
+    - /bin/sh
+    - -c
+    - >
+      echo '
+      server {
+        listen       8080;
+        access_log off;
+        location / {
+          proxy_http_version 1.1;
+          proxy_pass http://heavy_backend:8081;
+        }
+        location /envoy {
+          proxy_http_version 1.1;
+          proxy_pass http://envoy:10000;
+        }
+        location /light {
+          proxy_http_version 1.1;
+          proxy_pass http://light_backend:8081;
+        }
+      }
+      '
+      > /etc/nginx/conf.d/default.conf
+      && /usr/local/openresty/bin/openresty -g 'daemon off;'
+    ports:
+    - "8080:8080"
+  heavy_backend:
+    image: openresty/openresty:alpine
+    cpu_quota: 102400
+    command:
+    - /bin/sh
+    - -c
+    - >
+      echo '
+      server {
+        listen       8081;
+        access_log off;
+        error_log /dev/stderr error;
+        location / {
+          content_by_lua_block {
+            -- Some heavy workload:
+            for i = 0, 12345 do
+              ngx.sleep(math.random() / 1000)
+            end
+            ngx.say("OK!")
+          }
+        }
+      }
+      '
+      > /etc/nginx/conf.d/default.conf
+      && /usr/local/openresty/bin/openresty -g 'daemon off;'
+  light_backend:
+    image: openresty/openresty:alpine
+    command:
+    - /bin/sh
+    - -c
+    - >
+      echo '
+      server {
+        listen       8081;
+        access_log off;
+        error_log /dev/stderr error;
+        location / {
+          content_by_lua_block {
+            -- Some heavy workload:
+            for i = 0, 123 do
+              ngx.sleep(math.random() / 1000)
+            end
+            ngx.say("ok")
+          }
+        }
+      }
+      '
+      > /etc/nginx/conf.d/default.conf
+      && /usr/local/openresty/bin/openresty -g 'daemon off;'
+  envoy:
+    image: envoyproxy/envoy-alpine:latest
+    ports:
+    - "10000:10000"
+    - "9901:9901"
+    volumes:
+    - ./envoy.yaml:/etc/envoy/envoy.yaml
+    environment:
+    - loglevel=info
