@@ -10,5 +10,3 @@ services:
     - loglevel=info
   signer:
     build: signer
-    ports:
-    - "8080:8080"
