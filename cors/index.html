@@ -3,21 +3,18 @@
     <title>Envoy CORS Example</title>
 </head>
 <script type="text/javascript">
-  const client = new XMLHttpRequest()
-
   function callApi(url) {
+      const client = new XMLHttpRequest()
       client.open('GET', url, true);
-      client.onreadystatechange = handler;
-      client.send();
-  }
-
-  function handler() {
-      const responseHeaders = client.getAllResponseHeaders()
-      if (responseHeaders === "") {
-          document.getElementById("result").textContent = 'CORS Error ' + client.statusText;
-      } else if (client.readyState === 4 && client.status === 200) {
-          document.getElementById("result").textContent = client.responseText;
+      client.onreadystatechange = () => {
+          const responseHeaders = client.getAllResponseHeaders()
+          if (responseHeaders === "") {
+              document.getElementById("result").textContent = 'CORS Error ' + client.statusText;
+          } else if (client.readyState === 4 && client.status === 200) {
+              document.getElementById("result").textContent = client.responseText;
+          }
       }
+      client.send();
   }
 </script>
 <body>

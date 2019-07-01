@@ -2,23 +2,8 @@ version: '2'
 services:
   web:
     image: openresty/openresty:alpine
-    command:
-    - /bin/sh
-    - -c
-    - >
-      echo '
-      server {
-        listen       80;
-        access_log off;
-        root         /html;
-        location / {
-        }
-      }
-      '
-      > /etc/nginx/conf.d/default.conf
-      && /usr/local/openresty/bin/openresty -g 'daemon off;'
     volumes:
-      - ./index.html:/html/index.html
+      - ./index.html:/usr/local/openresty/nginx/html/index.html
     ports:
     - "8080:80"
   envoy-cors:
@@ -45,7 +30,7 @@ services:
         access_log off;
         location / {
           content_by_lua_block {
-            ngx.say("Hi!")
+            ngx.say("API is called!")
           }
         }
       }
