@@ -21,7 +21,7 @@ services:
             return 200;
           }
           location /ng {
-            return 401;
+            return 403;
           }
         }
         '
