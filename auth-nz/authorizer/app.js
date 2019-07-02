@@ -8,5 +8,5 @@ function extractSub(req) {
   return sub.includes('ng') ? 403 : 200
 }
 
-app.get(/\//, (req, res) => res.send(extractSub(req)))
-app.post(/\//, (req, res) => res.send(extractSub(req)))
+app.get(/^\/authz\//, (req, res) => res.send(extractSub(req)))
+app.post(/^\/authz\//, (req, res) => res.send(extractSub(req)))
