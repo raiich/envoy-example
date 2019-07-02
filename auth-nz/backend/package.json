@@ -1,0 +1,14 @@
+{
+  "name": "signer",
+  "version": "0.0.1",
+  "scripts": {
+    "serve": "node app.js"
+  },
+  "description": "jwt signer for posted json",
+  "main": "app.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
